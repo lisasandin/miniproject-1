@@ -66,7 +66,7 @@ def plot_graph():
     # Plot A
     axs[0].plot(sol.t, sol.y[5], color='blue', label='A')
     axs[0].set_ylabel('Number of molecules')
-    axs[0].set_title('A')
+    axs[0].set_title('Fig2_A')
     axs[0].legend(loc='upper right')
     axs[0].grid()
 
@@ -77,7 +77,7 @@ def plot_graph():
     axs[1].plot(sol.t, sol.y[7], color='red', label='R')
     axs[1].set_xlabel('Time')
     axs[1].set_ylabel('Number of molecules')
-    axs[1].set_title('R')
+    axs[1].set_title('Fig2_b')
     axs[1].legend(loc='upper right')
     axs[1].grid()
 
