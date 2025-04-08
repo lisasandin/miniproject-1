@@ -1,0 +1,88 @@
+### Choosing option 1 ###
+
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+import numpy as np
+
+ ### Part A ###
+
+# reaction rates
+alpha_a = 50
+alphaprim_a = 500
+alpha_r = 0.01
+alphaprim_r = 50
+
+beta_a = 50
+beta_r = 5
+
+gamma_a = 1
+gamma_r = 1
+gamma_c = 2
+
+theta_a = 50
+theta_r = 100
+
+sigma_ma = 10
+sigma_mr = 0.5
+sigma_a = 1
+sigma_r = 0.2
+
+# initial conditions
+da = 1
+dr = 1
+da_prim = 0
+dr_prim = 0
+ma = 0
+mr = 0
+A = 0
+R = 0
+C = 0
+
+
+def Predator_Prey(t, y):
+    da, dr, da_prim, dr_prim, ma, A, mr, R, C = y
+    yprime = np.zeros(9)
+    yprime[0] = theta_a*da_prim - gamma_a*da*A
+    yprime[1] = theta_r*dr_prim - gamma_r*dr*A
+    yprime[2] = gamma_a*da*A - theta_a*da_prim
+    yprime[3] = gamma_r*dr*A - theta_r*dr_prim
+    yprime[4] = alphaprim_a*da_prim + alpha_a*da - sigma_ma*ma
+    yprime[5] = beta_a*ma + theta_a*da_prim + theta_r*dr_prim - A*(gamma_a*da + gamma_r*dr + gamma_c*R + sigma_a)
+    yprime[6] = alphaprim_r*dr_prim + alpha_r*dr - sigma_mr*mr
+    yprime[7] = beta_r*mr - gamma_c*A*R + sigma_a*C - sigma_r*R
+    yprime[8] = gamma_c*A*R - sigma_a*C
+    return yprime
+
+
+Initial = [da, dr, da_prim, dr_prim, ma, mr, A, R, C]
+FinalTime = 400
+teval = np.linspace(0, FinalTime, 1000)      # fine evaluation time samples
+
+
+def plot_graph():
+    fig, axs = plt.subplots(2, 1, figsize=(8, 6))
+    sol = solve_ivp(Predator_Prey, [0, FinalTime], Initial, method = 'BDF', t_eval = teval)
+
+    # Plot A
+    axs[0].plot(sol.t, sol.y[5], color='blue', label='A')
+    axs[0].set_ylabel('Number of molecules')
+    axs[0].set_title('A')
+    axs[0].legend(loc='upper right')
+    axs[0].grid()
+
+
+    sol = solve_ivp(Predator_Prey, [0, FinalTime], Initial, method = 'BDF', t_eval = teval)
+
+    # Plot R 
+    axs[1].plot(sol.t, sol.y[7], color='red', label='R')
+    axs[1].set_xlabel('Time')
+    axs[1].set_ylabel('Number of molecules')
+    axs[1].set_title('R')
+    axs[1].legend(loc='upper right')
+    axs[1].grid()
+
+    plt.tight_layout()
+    plt.show()
+
+
+plot_graph()
