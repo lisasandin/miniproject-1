@@ -132,19 +132,22 @@ Times = list(Times.values())
 A = [state[6] for state in States.values()]
 R = [state[7] for state in States.values()]
 
-plt.figure(figsize = (6, 3))
-plt.plot(Times,A,linestyle = '-', color = 'blue',label = 'A')
-plt.plot(Times,R,linestyle = '-', color = 'red',label = 'R')
-plt.xlabel('Time')
-plt.ylabel('Number of molecules')
-plt.title('Stochastic solutions using SSA')
-plt.legend()
+# Create side-by-side subplots
+fig, axs = plt.subplots(2, 1, figsize=(8, 6))  # 1 row, 2 columns
+
+# Plot A
+axs[0].plot(Times, A, color='blue')
+axs[0].set_title('Molecule A')
+axs[0].set_xlabel('Time')
+axs[0].set_ylabel('Number of molecules')
+
+# Plot R
+axs[1].plot(Times, R, color='red')
+axs[1].set_title('Molecule R')
+axs[1].set_xlabel('Time')
+axs[1].set_ylabel('Number of molecules')
+
+plt.suptitle('Stochastic solutions using SSA')
+plt.tight_layout()  
 plt.show()
 
-
-
-        AllTimes[k] = t
-        AllStates[k] = State
-    return AllTimes, AllStates
-
-SSA(Initial, StateChangeMat, FinalTime)
