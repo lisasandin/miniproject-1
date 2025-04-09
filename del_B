@@ -34,26 +34,6 @@ A = 0
 R = 0
 C = 0
 
-Initial = [da, dr, da_prim, dr_prim, ma, mr, A, R, C]
-FinalTime = 400
-StateChangeMat = np.array([
-                          [0, 0, 0, 0, 0, 0, -1, -1, 1],
-                          [0, 0, 0, 0, 0, 0, -1, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 0, 1, -1],
-                          [0, 0, 0, 0, 0, 0, 0, -1, 0],
-                          [-1, 0, 1, 0, 0, 0, -1, 0, 0],
-                          [0, -1, 0, 1, 0, 0, 1, 0, 0],
-                          [1, 0, -1, 0, 0, 0, 1, 0, 0],
-                          [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                          [0, 0, 0, 0, 1, 0, 0, 0, 0],
-                          [0, 0, 0, 0, -1, 0, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 1, 0, 0],
-                          [0, 1, 0, -1, 0, 0, 1, 0, 0],
-                          [0, 0, 0, 0, 0, 1, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 1, 0, 0, 0],
-                          [0, 0, 0, 0, 0, -1, 0, 0, 0],
-                          [0, 0, 0, 0, 0, 0, 0, 1, 0]
-                          ])
 
 def RandExp(lam,N):
     U =  np.random.rand(N)
@@ -65,35 +45,6 @@ def RandDisct(x,p,N):
     U = np.random.rand(N)
     idx = np.searchsorted(cdf, U)
     return x[idx]
-
-
-def PropensityFunc(State, ReactNo):
-    # State: state variable [da, dr, da_prim, dr_prim, ma, mr, A, R, C]
-    # ReactNo: number of reactions
-    w = np.zeros(ReactNo)
-    da, dr, da_prim, dr_prim, ma, mr, A, R, C = State
-    w[0] = gamma_c*A*R
-    w[1] = sigma_a*A
-    w[2] = sigma_a*C
-    w[3] = sigma_r*R
-    w[4] = gamma_a*da*A
-    w[5] = gamma_r*dr*A
-    w[6] = theta_a*da_prim
-    w[7] = alpha_a*da
-    w[8] = alphaprim_a*da_prim
-    w[9] = sigma_ma*ma
-    w[10] = beta_a*ma
-    w[11] = theta_r*dr_prim
-    w[12] = alpha_r*dr
-    w[13] = alphaprim_r*dr_prim
-    w[14] = sigma_mr*mr 
-    w[15] = beta_r*mr
-
-    return w
-
-
-
-
 
 def SSA(Initial, StateChangeMat, FinalTime):
    # Inputs:
@@ -118,6 +69,80 @@ def SSA(Initial, StateChangeMat, FinalTime):
         which = RandDisct(ReactNum,w/a,1)             # WHICH reaction occurs
         State = State + StateChangeMat[which.item(),] # Uppdate the state
         k += 1
+        AllTimes[k] = t
+        AllStates[k] = State
+    return AllTimes, AllStates
+
+
+Initial = [da, dr, da_prim, dr_prim, ma, mr, A, R, C]
+FinalTime = 400
+StateChangeMat = np.array([   #da, dr, da_prim, dr_prim, ma, mr, A, R, C
+                          [0, 0, 0, 0, 0, 0, -1, -1, 1], 
+                          [0, 0, 0, 0, 0, 0, -1, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 1, -1],
+                          [0, 0, 0, 0, 0, 0, 0, -1, 0],
+                          [-1, 0, 1, 0, 0, 0, -1, 0, 0],
+                          [0, -1, 0, 1, 0, 0, 1, 0, 0],
+                          [1, 0, -1, 0, 0, 0, 1, 0, 0],
+                          [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                          [0, 0, 0, 0, -1, 0, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 1, 0, 0],
+                          [0, 1, 0, -1, 0, 0, 1, 0, 0],
+                          [0, 0, 0, 0, 0, 1, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 1, 0, 0, 0],
+                          [0, 0, 0, 0, 0, -1, 0, 0, 0],
+                          [0, 0, 0, 0, 0, 0, 0, 1, 0]
+                          ])
+
+
+
+def PropensityFunc(State, ReactNo):
+    # State: state variable [da, dr, da_prim, dr_prim, ma, mr, A, R, C]
+    # ReactNo: number of reactions
+    w = np.zeros(ReactNo)
+    da, dr, da_prim, dr_prim, ma, mr, A, R, C = State
+    w[0] = gamma_c*A*R
+    w[1] = sigma_a*A
+    w[2] = sigma_a*C
+    w[3] = sigma_r*R
+    w[4] = gamma_a*da*A
+    w[5] = gamma_r*dr*A
+    w[6] = theta_a*da_prim
+    w[7] = alpha_a*da
+    w[8] = alphaprim_a*da_prim
+    w[9] = sigma_ma*ma
+    w[10] = beta_a*ma
+    w[11] = theta_r*dr_prim
+    w[12] = alpha_r*dr
+    w[13] = alphaprim_r*dr_prim
+    w[14] = sigma_mr*mr 
+    w[15] = beta_r*mr
+    return w
+
+
+
+# SSA Simulation of predator-prey model 
+
+Times, States = SSA(Initial, StateChangeMat, FinalTime)
+
+# retrieve state variables A and R from the output list
+
+Times = list(Times.values())
+A = [state[6] for state in States.values()]
+R = [state[7] for state in States.values()]
+
+plt.figure(figsize = (6, 3))
+plt.plot(Times,A,linestyle = '-', color = 'blue',label = 'A')
+plt.plot(Times,R,linestyle = '-', color = 'red',label = 'R')
+plt.xlabel('Time')
+plt.ylabel('Number of molecules')
+plt.title('Stochastic solutions using SSA')
+plt.legend()
+plt.show()
+
+
+
         AllTimes[k] = t
         AllStates[k] = State
     return AllTimes, AllStates
