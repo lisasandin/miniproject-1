@@ -1,0 +1,55 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+TrainMat = np.load('C:/Users/amand/Downloads/Miniproject 2/TrainDigits.npy')
+TrainLab = np.load('C:/Users/amand/Downloads/Miniproject 2/TrainLabels.npy')
+
+print(TrainMat.shape)
+print(TrainLab.shape)
+
+TrainLab = TrainLab.flatten()
+
+print(TrainLab.shape)
+
+
+d3 = TrainMat[:, TrainLab == 3][:, :400]
+d8 = TrainMat[:, TrainLab == 8][:, :400] 
+
+#Svd calculations
+U3, S3, Vh3 = np.linalg.svd(d3, full_matrices=False)
+U8, S8, Vh8 = np.linalg.svd(d8, full_matrices=False)
+
+#D = np.reshape(d, (28, 28)).T # Reshaping a vector to a matrix
+
+# Plot singular values
+plt.figure(figsize=(10, 4))
+
+plt.subplot(1, 2, 1)
+plt.plot(S3, marker='o')
+plt.title('Singular Values - Digit 3')
+plt.xlabel('Index')
+plt.ylabel('Singular Value')
+
+plt.subplot(1, 2, 2)
+plt.plot(S8, marker='o')
+plt.title('Singular Values - Digit 8')
+plt.xlabel('Index')
+plt.ylabel('Singular Value')
+
+plt.tight_layout()
+plt.show()
+
+#Get the first three images
+def plot_singular_images(U, digit_label):
+    plt.figure(figsize=(9, 3))
+    for i in range(3):
+        image = U[:, i].reshape((28, 28)).T
+        plt.subplot(1, 3, i + 1)
+        plt.imshow(image, cmap='gray')
+        plt.title(f'{digit_label}, u{i+1}')
+        plt.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+plot_singular_images(U3, 'Digit 3')
+plot_singular_images(U8, 'Digit 8')
